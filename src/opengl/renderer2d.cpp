@@ -8,9 +8,10 @@ namespace luna
     //index_buffer renderer2d::ibo(nullptr, max_vertices * sizeof(GLint));
 
     renderer2d::renderer2d()
-        : vbo(max_vertices * sizeof(vertices)), ibo(nullptr, max_vertices * sizeof(GLint)),
-        shaders("../../src/opengl/renderer_shaders/quad.vs", "../../src/opengl/renderer_shaders/quad.fs")
+        : vbo(max_vertices * sizeof(vertices)), ibo(nullptr, max_vertices * sizeof(GLuint)),
+        shaders("../basic.vs", "../basic.fs")
     {
+        vao.add_data(2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
         shaders.compile();
         shaders.link();
     }
@@ -52,7 +53,7 @@ namespace luna
     int counter = 0;
     void renderer2d::internal_draw()
     {
-        GLfloat* vertices_ptr = new GLfloat[2 * vertex_count];
+        GLfloat vertices_ptr[2 * vertex_count];
         int count = 0;
         for(int i = 0; i < vertices.size(); i++)
         {
@@ -64,7 +65,7 @@ namespace luna
             }
         } 
 
-        GLuint* indices_ptr = new GLuint[index_count];
+        GLuint indices_ptr[index_count];
 
         count = 0;
         for(int i = 0; i < indices.size(); i++)
@@ -78,9 +79,9 @@ namespace luna
 
         vao.bind();
         vbo.bind();
+        vbo.change_data(vertices_ptr, sizeof(vertices_ptr));
         ibo.bind();
-        vbo.change_data(vertices_ptr, 2 * vertex_count * sizeof(GLfloat));
-        ibo.change_data(indices_ptr, index_count * sizeof(GLuint));
+        ibo.change_data(indices_ptr, sizeof(indices_ptr));
 
         shaders.use();
         

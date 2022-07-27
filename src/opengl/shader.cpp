@@ -75,19 +75,19 @@ namespace luna
         glUniform1i(glGetUniformLocation(_id, name.c_str()), value);
     }
 
-    void shader_program::uniform2i(const std::string& name, int value0, int value1)
+    void shader_program::uniform2i(const std::string& name, const glm::ivec2& values)
     {
-        glUniform2i(glGetUniformLocation(_id, name.c_str()), value0, value1);
+        glUniform2i(glGetUniformLocation(_id, name.c_str()), values.x, values.y);
     }
 
-    void shader_program::uniform3i(const std::string& name, int value0, int value1, int value2)
+    void shader_program::uniform3i(const std::string& name, const glm::ivec3& values)
     {
-        glUniform3i(glGetUniformLocation(_id, name.c_str()), value0, value1, value2);
+        glUniform3i(glGetUniformLocation(_id, name.c_str()), values.x, values.y, values.z);
     }
 
-    void shader_program::uniform4i(const std::string& name, int value0, int value1, int value2, int value3)
+    void shader_program::uniform4i(const std::string& name, const glm::ivec4& values)
     {
-        glUniform4i(glGetUniformLocation(_id, name.c_str()), value0, value1, value2, value3);
+        glUniform4i(glGetUniformLocation(_id, name.c_str()), values.x, values.y, values.z, values.w);
     }
 
     void shader_program::uniform1f(const std::string& name, float value)
@@ -95,18 +95,18 @@ namespace luna
         glUniform1f(glGetUniformLocation(_id, name.c_str()), value);
     }
 
-    void shader_program::uniform2f(const std::string& name, glm::vec2 values)
+    void shader_program::uniform2f(const std::string& name, const glm::vec2& values)
     {
         glUniform2f(glGetUniformLocation(_id, name.c_str()), values.x, values.y);
     }
 
-    void shader_program::uniform3f(const std::string& name, glm::vec3 values)
+    void shader_program::uniform3f(const std::string& name, const glm::vec3& values)
     {
-
+        glUniform2f(glGetUniformLocation(_id, name.c_str()), values.x, values.y);
     }
 
-    void shader_program::uniform4f(const std::string& name, glm::vec4 values)
+    void shader_program::uniform4f(const std::string& name, const glm::vec4& values)
     {
-
+        glUniform2f(glGetUniformLocation(_id, name.c_str()), values.x, values.y);
     }
 }

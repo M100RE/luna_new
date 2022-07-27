@@ -34,6 +34,12 @@ namespace luna
         return _height;
     }
 
+    void window::change_dimensions(uint16_t width, uint16_t height)
+    {
+        _width = width;
+        _height = height;
+    }
+
     void window::set_framebuffer_size_callback(void (*framebuffer_size_callback)(GLFWwindow* window, int width, int height))
     {
         glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);

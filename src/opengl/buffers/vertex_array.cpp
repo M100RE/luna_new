@@ -1,11 +1,12 @@
 #include <luna/opengl/buffers/vertex_array.h>
+#include <iostream>
 
 namespace luna
 {
     vertex_array::vertex_array(GLboolean bound)
     {
         glGenVertexArrays(1, &_id);
-        if(bound)
+        if(bound) 
         {
             bind();
         }
@@ -19,6 +20,11 @@ namespace luna
     void vertex_array::unbind()
     {
         glBindVertexArray(_id);
+    }
+
+    vertex_array::~vertex_array()
+    {
+        glDeleteVertexArrays(1, &_id);
     }
 
     void vertex_array::add_data(GLint component_count, GLenum type, GLboolean normalized, GLsizei stride, int offset)
@@ -36,7 +42,7 @@ namespace luna
             glVertexAttribIPointer(_attrib_index, component_count, type, stride, (void*)offset);
             break;
             default:
-            glVertexAttribPointer(_attrib_index, component_count, type, normalized, stride, (void*)offset);
+            glVertexAttribPointer(_attrib_index, component_count, type, GL_FALSE, stride, (void*)offset);
         }
         glEnableVertexAttribArray(_attrib_index);
         _attrib_index++;

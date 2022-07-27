@@ -10,8 +10,10 @@ namespace luna
     private:
         GLuint _id;
     public:
-        index_buffer(GLuint* indices, GLuint size);
+        index_buffer(const void* indices, GLuint size);
+        ~index_buffer();
         void bind();
         void unbind();
+        void change_data(const void* indices, GLuint size);
     };
 }

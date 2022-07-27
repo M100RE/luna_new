@@ -12,11 +12,10 @@ namespace luna
     {
     private:
         GLuint _id;
-        GLenum _datatype;
-
     public:
         vertex_buffer(GLuint size);
         vertex_buffer(const void* vertices, GLuint size);
+        ~vertex_buffer();
 
         void bind();
         void unbind();

@@ -16,6 +16,11 @@ namespace luna
         glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
     }
 
+    vertex_buffer::~vertex_buffer()
+    {
+        glDeleteBuffers(1, &_id);
+    }
+
     void vertex_buffer::bind()
     {
         glBindBuffer(GL_ARRAY_BUFFER, _id);
@@ -30,6 +35,5 @@ namespace luna
     {
         bind();
         glBufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
-        unbind();
     }
 }

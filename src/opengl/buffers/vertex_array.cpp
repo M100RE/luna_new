@@ -24,11 +24,13 @@ namespace luna
 
     vertex_array::~vertex_array()
     {
+        std::cout << "destructed!\n";
         glDeleteVertexArrays(1, &_id);
     }
 
     void vertex_array::add_data(GLint component_count, GLenum type, GLboolean normalized, GLsizei stride, int offset)
     {
+        bind();
         switch(type)
         {
             case GL_BYTE:
@@ -42,9 +44,10 @@ namespace luna
             glVertexAttribIPointer(_attrib_index, component_count, type, stride, (void*)offset);
             break;
             default:
-            glVertexAttribPointer(_attrib_index, component_count, type, GL_FALSE, stride, (void*)offset);
+            //glVertexAttribPointer(_attrib_index, component_count, type, GL_FALSE, stride, (void*)offset);
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void*)0);
         }
-        glEnableVertexAttribArray(_attrib_index);
+        glEnableVertexAttribArray(0);
         _attrib_index++;
     } 
 }

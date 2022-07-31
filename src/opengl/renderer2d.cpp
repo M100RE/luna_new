@@ -1,19 +1,50 @@
 #include <luna/opengl/renderer2d.h>
 #include <iostream>
 
+
 namespace luna
 {
-    //vertex_array renderer2d::vao;
-    //vertex_buffer renderer2d::vbo(max_vertices* sizeof(vertex));
-    //index_buffer renderer2d::ibo(nullptr, max_vertices * sizeof(GLint));
+    polygon::polygon(GLfloat* vertices, GLuint vertices_size, GLuint* indices, GLuint indices_size)
+        : _vbo{vertices, vertices_size}, _ibo{indices, indices_size}
+    {
+        _vao.add_data(2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+        _elements = 6;
+        std::cout << "elements: " << _elements << "\n";
+        _vao.unbind();
+        _vbo.unbind();
+        _ibo.unbind();
+    }
+
+    void polygon::draw()
+    {
+        _vao.bind();
+        _ibo.bind();
+
+        glDrawElements(GL_TRIANGLES, _elements, GL_UNSIGNED_INT, 0);
+    }
+
+    void GLAPIENTRY debug_callback( GLenum source,
+                                    GLenum type,
+                                    GLuint id,
+                                    GLenum severity,
+                                    GLsizei length,
+                                    const GLchar* message,
+                                    const void* userParam)
+    {
+       fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
+            type, severity, message ); 
+    }
 
     renderer2d::renderer2d()
-        : vbo(max_vertices * sizeof(vertices)), ibo(nullptr, max_vertices * sizeof(GLuint)),
-        shaders("../basic.vs", "../basic.fs")
     {
-        vao.add_data(2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
         shaders.compile();
         shaders.link();
+
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(debug_callback, 0);
+
     }
 
     renderer2d& renderer2d::get_instance()
@@ -22,75 +53,89 @@ namespace luna
         return instance;
     }
 
-    void renderer2d::internal_update_settings()
+    GLfloat* renderer2d::vertex_bufferize(std::vector<glm::vec2> positions)
     {
-        std::cout << "hello\n";
-        //glPolygonMode(GL_FRONT_AND_BACK, (settings::wireframe) ? GL_LINE : GL_FILL);
-    }
+        GLfloat* vbo_ptr = new GLfloat[positions.size() * 4];
 
-    GLuint renderer2d::internal_create_quad(glm::vec2 position, glm::vec2 size, GLfloat angle, glm::vec4 color)
-    {
-        vertex_count += 4;
-        index_count += 6;
-
-        std::vector<vertex> quad_vertices(4);
-        quad_vertices[0].position = position;
-        quad_vertices[1].position = {position.x + size.x, position.y};
-        quad_vertices[2].position = {position.x + size.x, position.y + size.y};
-        quad_vertices[3].position = {position.x, position.y + size.y};
-
-        vertices.push_back(quad_vertices);
-
-        unsigned int offset = indices.size();
-        indices.push_back({
-            0 + offset, 1 + offset, 2 + offset,
-            3 + offset, 0 + offset, 2 + offset
-        });
-
-        return vertices.size() - 1;
-    }
-
-    int counter = 0;
-    void renderer2d::internal_draw()
-    {
-        GLfloat vertices_ptr[2 * vertex_count];
-        int count = 0;
-        for(int i = 0; i < vertices.size(); i++)
+        uint8_t counter = 0;
+        for(int i = 0; i < positions.size(); i++)
         {
-            for(int j = 0; j < vertices[i].size(); j++)
-            {
-                vertices_ptr[count] = vertices[i][j].position.x;
-                vertices_ptr[count+1] = vertices[i][j].position.y;
-                count += 2;
-            }
-        } 
+            vbo_ptr[counter] = positions[i].x;
+            vbo_ptr[counter+1] = positions[i].y;
 
-        GLuint indices_ptr[index_count];
-
-        count = 0;
-        for(int i = 0; i < indices.size(); i++)
-        {
-            for(int j = 0; j < indices[i].size(); j++)
-            {
-                indices_ptr[count] = indices[i][j];
-                count++;
-            }
+            counter += 2;
         }
 
-        vao.bind();
-        vbo.bind();
-        vbo.change_data(vertices_ptr, sizeof(vertices_ptr));
-        ibo.bind();
-        ibo.change_data(indices_ptr, sizeof(indices_ptr));
-
-        shaders.use();
-        
-        glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+        return vbo_ptr;
     }
 
+    std::vector<GLuint> renderer2d::triangulate(std::vector<glm::vec2> positions)
+    {
+        int unfinished_verts = positions.size();
+        int vertex_index = 0;
 
-    void renderer2d::update_settings()
+        //while(unfinished_verts > 3)
+        while(vertex_index < 4)
+        {
+            int prev_vert = (vertex_index == 0) ? positions.size() - 1 : vertex_index - 1;
+            int post_vert = (vertex_index == positions.size() - 1) ? 0 : vertex_index + 1;
+            std::cout << prev_vert << "|" << post_vert << "\n";
+            vertex_index++;
+        }
+        return {0};
+    } 
+
+    GLuint renderer2d::internal_create_polygon(std::vector<glm::vec2> positions, GLfloat angle, glm::vec4 color)
+    {
+        GLuint indices[] = 
+        {
+            0, 1, 2,
+            0, 3, 2
+        };
+        GLfloat vertices[] = 
+        {
+            -0.5, -0.5,
+            0.5, -0.5,
+            0.5, 0.5,
+            -0.5, 0.5
+        };  
+        polygon* shape = new polygon(vertices, sizeof(vertices), indices, sizeof(indices));
+        polygons.push_back(shape);
+
+        /*init_new_shape();
+        vaos[vaos.size()-1].bind();
+        //GLfloat* vbo_data = vertex_bufferize(positions);
+        vertex_buffer vbo(vertices, sizeof(vertices));
+        vbos.push_back(vbo);
+
+        /*std::vector<GLuint> triangulated = triangulate(positions);
+        GLuint* ibo_data = triangulated.data();
+
+        index_buffer ibo(indices, sizeof(indices));
+        ibos.push_back(ibo);
+
+        vaos.back().add_data(2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+        vbos.back().unbind();
+        ibos.back().unbind();
+        vaos.back().unbind();
+
+        return vaos.size() - 1;
+        */
+        return 0;
+    }
+
+    void renderer2d::internal_draw()
+    {
+        for(int i = 0; i < polygons.size(); i++)
+        {
+            shaders.use();
+            polygons[i]->draw();
+        }
+    }
+
+    /*void renderer2d::update_settings()
     {get_instance().internal_update_settings();}
+    */
 
     /*void renderer2d::add_texture(GLuint object, const std::string& texture_path)
     {get_instance().internal_add_texture(object, texture_path);}
@@ -99,6 +144,14 @@ namespace luna
     void renderer2d::draw()
     {get_instance().internal_draw();}
 
-    GLuint renderer2d::create_quad(glm::vec2 position, glm::vec2 size, GLfloat angle, glm::vec4 color)
+    GLuint renderer2d::create_polygon(std::vector<glm::vec2> positions, GLfloat angle, glm::vec4 color)
+    {return get_instance().internal_create_polygon(positions, angle, color);}
+
+    /*GLuint renderer2d::create_quad(glm::vec2 position, glm::vec2 size, GLfloat angle, glm::vec4 color)
     {return get_instance().internal_create_quad(position, size, angle, color);}
+    */
+
+    /*void renderer2d::model_matrix(GLuint object, glm::mat3 model_mat)
+    {get_instance().internal_model_matrix(object, model_mat);}
+    */
 }

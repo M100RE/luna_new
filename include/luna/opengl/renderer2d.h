@@ -34,6 +34,10 @@ namespace luna
         GLsizei _elements;
     public:
         polygon(GLfloat* vertices, GLuint vertices_size, GLuint* indices, GLuint indices_size);
+        polygon(const polygon& copy);
+        polygon(polygon &&move);
+
+        ~polygon() = default;
 
         void draw();
     };
@@ -41,9 +45,9 @@ namespace luna
     class renderer2d
     {
     private:
-
         shader_program shaders{"../basic.vs", "../basic.fs"};
-        std::vector<polygon*> polygons;
+        //std::vector<polygon*> polygons;
+        std::vector<polygon> polygons;
 
         renderer2d();
 

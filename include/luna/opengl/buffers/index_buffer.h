@@ -11,6 +11,8 @@ namespace luna
         GLuint _id;
     public:
         index_buffer(const void* indices, GLuint size);
+        index_buffer(const index_buffer& copy);
+        index_buffer(index_buffer&& move);
         ~index_buffer();
         void bind();
         void unbind();

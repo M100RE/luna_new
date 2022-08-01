@@ -15,6 +15,10 @@ namespace luna
     public:
         vertex_buffer(GLuint size);
         vertex_buffer(const void* vertices, GLuint size);
+
+        vertex_buffer(const vertex_buffer& copy);
+        vertex_buffer(vertex_buffer&& move);
+
         ~vertex_buffer();
 
         void bind();

@@ -11,6 +11,8 @@ namespace luna
         GLuint _attrib_index;
     public:
         vertex_array(GLboolean bound = true);
+        vertex_array(const vertex_array& copy);
+        vertex_array(vertex_array&& move);
         ~vertex_array();
         void bind();
         void unbind();

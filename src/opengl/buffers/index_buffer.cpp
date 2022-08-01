@@ -1,4 +1,5 @@
 #include <luna/opengl/buffers/index_buffer.h>
+#include <luna/shared/log.h>
 
 namespace luna
 {
@@ -7,6 +8,18 @@ namespace luna
         glGenBuffers(1, &_id);
         bind();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_DYNAMIC_DRAW);
+    }
+
+    index_buffer::index_buffer(const index_buffer& copy)
+    {
+        LN_WARNING << "if any copy of this object runs out of scope, all objects are unusable, due to destructor, instead use move constructor";
+        _id = copy._id;
+    }
+
+    index_buffer::index_buffer(index_buffer&& move)
+    {
+        _id = move._id;
+        move._id = 0;
     }
 
     index_buffer::~index_buffer()

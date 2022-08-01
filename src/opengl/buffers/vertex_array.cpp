@@ -1,5 +1,5 @@
 #include <luna/opengl/buffers/vertex_array.h>
-#include <iostream>
+#include <luna/shared/log.h>
 
 namespace luna
 {
@@ -10,6 +10,20 @@ namespace luna
         {
             bind();
         }
+    }
+
+    vertex_array::vertex_array(const vertex_array& copy)
+    {
+        LN_WARNING << "if any copy of this object runs out of scope, all objects are unusable, due to destructor, instead use move constructor";
+        _id = copy._id;
+        _attrib_index = copy._attrib_index;
+    }
+
+    vertex_array::vertex_array(vertex_array&& move)
+    {
+        _id = move._id;
+        _attrib_index = move._attrib_index;
+        move._id = 0;
     }
 
     void vertex_array::bind()
@@ -24,7 +38,6 @@ namespace luna
 
     vertex_array::~vertex_array()
     {
-        std::cout << "destructed!\n";
         glDeleteVertexArrays(1, &_id);
     }
 

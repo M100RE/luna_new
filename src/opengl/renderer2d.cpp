@@ -1,5 +1,5 @@
 #include <luna/opengl/renderer2d.h>
-#include <iostream>
+#include <luna/shared/log.h>
 
 
 namespace luna
@@ -9,11 +9,22 @@ namespace luna
     {
         _vao.add_data(2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
         _elements = 6;
-        std::cout << "elements: " << _elements << "\n";
         _vao.unbind();
         _vbo.unbind();
         _ibo.unbind();
     }
+
+    polygon::polygon(const polygon& copy)
+        : _vao{copy._vao}, _vbo{copy._vbo}, _ibo{copy._ibo},
+        _elements{copy._elements}
+    {
+        LN_WARNING << "if any copy of this object runs out of scope, all objects are unusable, due to destructor, instead use move constructor";
+    }
+
+    polygon::polygon(polygon&& move)
+        : _vao{std::move(move._vao)}, _vbo{std::move(move._vbo)}, _ibo{std::move(move._ibo)},
+        _elements{move._elements}
+    {}
 
     void polygon::draw()
     {
@@ -31,9 +42,7 @@ namespace luna
                                     const GLchar* message,
                                     const void* userParam)
     {
-       fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
-            type, severity, message ); 
+        LN_ERROR << message;
     }
 
     renderer2d::renderer2d()
@@ -99,7 +108,9 @@ namespace luna
             0.5, 0.5,
             -0.5, 0.5
         };  
-        polygon* shape = new polygon(vertices, sizeof(vertices), indices, sizeof(indices));
+        //polygon* shape = new polygon(vertices, sizeof(vertices), indices, sizeof(indices));
+        polygon shape(vertices, sizeof(vertices), indices, sizeof(indices));
+        //polygons.push_back(std::move(shape));
         polygons.push_back(shape);
 
         /*init_new_shape();
@@ -129,7 +140,8 @@ namespace luna
         for(int i = 0; i < polygons.size(); i++)
         {
             shaders.use();
-            polygons[i]->draw();
+            //polygons[i]->draw();
+            polygons[i].draw();
         }
     }
 

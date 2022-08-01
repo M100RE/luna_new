@@ -1,5 +1,5 @@
 #include <luna/core/application.h>
-#include <iostream>
+#include <luna/shared/log.h>
 
 namespace luna
 {

@@ -17,6 +17,10 @@ namespace luna
     class logger
     {
     private:
+    #ifdef _WIN32
+        int color;
+        std::stringstream date;
+    #endif
         std::stringstream message_stream;
 
         std::string format_number(int number);

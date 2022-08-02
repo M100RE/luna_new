@@ -35,7 +35,7 @@ namespace luna
     public:
         polygon(GLfloat* vertices, GLuint vertices_size, GLuint* indices, GLuint indices_size);
         polygon(const polygon& copy);
-        polygon(polygon &&move);
+        polygon(polygon &&move) noexcept;
 
         ~polygon() = default;
 

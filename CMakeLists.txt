@@ -6,7 +6,7 @@ project(luna)
 
 find_package(glfw3 3.3 REQUIRED)
 
-set(LUNA_INCLUDE_DIRS include vendor/libs/glad/include vendor/libs/glm/include)
+set(LUNA_INCLUDE_DIRS include vendor/libs/glad/include vendor/libs/glm/include vendor/libs/stb/include)
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 

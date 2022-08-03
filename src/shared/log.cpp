@@ -8,7 +8,7 @@
 
 namespace luna
 {
-    std::string logger::format_number(int number)
+    std::string logger::format_time_number(uint8_t number)
     {
         if(number / 10 == 0)
         {
@@ -27,7 +27,7 @@ namespace luna
         : log_type(log_type)
     #endif
     {
-        const char* format = "";
+        std::string format = "";
 
     #ifndef _WIN32
         switch (log_type)
@@ -53,7 +53,7 @@ namespace luna
             case LN_LOG_TYPE_ERROR: format = "ERROR"; color = 12; break;
         }
     #else
-        message_stream << "[" << format_number(now->tm_mday) << "." << format_number(now->tm_mon + 1) << "." << now->tm_year + 1900 << "|" << format_number(now->tm_hour) << ":" << format_number(now->tm_min) << ":" << format_number(now->tm_sec) << "]-";
+        message_stream << "[" << format_time_number(now->tm_mday) << "." << format_time_number(now->tm_mon + 1) << "." << now->tm_year + 1900 << "|" << format_time_number(now->tm_hour) << ":" << format_time_number(now->tm_min) << ":" << format_time_number(now->tm_sec) << "]-";
         message_stream << format << ": " << file << ":" << line << " (" << function << "): ";
     #endif
     }

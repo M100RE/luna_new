@@ -10,8 +10,7 @@ namespace luna
     {
     private:
         static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-        public:std::unique_ptr<window> _window;
-        private:
+        std::unique_ptr<window> _window;
         bool _running{true};
 
         void internal_create_window(uint16_t width, uint16_t height, const std::string& title);
@@ -26,6 +25,6 @@ namespace luna
         static void close();
         static void update();
 
-        static bool running();
+        [[nodiscard]] static bool running();
     };
 }

@@ -18,12 +18,12 @@ namespace luna
     {
     private:
     #ifdef _WIN32
-        int color;
+        uint8_t color;
         std::stringstream date;
     #endif
         std::stringstream message_stream;
 
-        std::string format_number(int number);
+        std::string format_time_number(uint8_t number);
 
     public:
         logger(LN_LOG_TYPE log_type, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE());
